@@ -4,12 +4,46 @@ function displayMap(data){
     function onEachFeature(feature, layer) {
         layer.bindPopup("<h3>" + feature.properties.place +
           "</h3><hr><p>" + new Date(feature.properties.time) + 
-          "</p><br><p>Magnitude: " + feature.properties.mag);
+          "</p><br><p>Magnitude: " + feature.properties.mag+"</p>");
       }
+
+    function createCircles(feature){
+            var color= ""
+            var mag=feature.properties.mag
+
+            if (mag >5){
+                color='#FF0000';
+            }
+            else if (mag > 4){
+                color = '#FF6600';
+            }
+            else if (mag > 3){
+                color= '#FF9900';
+            }
+            else if (mag > 2){
+                color = '#FFCC00';
+            }
+            else if (mag >1){
+                color = '#00FF00';
+            }
+            else {
+                color = '#99CC00';
+            }
+        var geojsonMarkerOptions = {
+            radius: mag * 3,
+            fillColor: color,
+            color: color,
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        };
+        return L.circleMarker([feature.geometry.coordinates[1],feature.geometry.coordinates[0]], geojsonMarkerOptions);
+    }
     
 // create Layer
     var earthquakes = L.geoJSON(data, {
-        onEachFeature: onEachFeature
+        onEachFeature: onEachFeature,
+        pointToLayer: createCircles
     });
 
 // create map
