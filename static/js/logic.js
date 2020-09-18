@@ -54,6 +54,7 @@ function displayMap(data) {
         pointToLayer: createCircles
     });
 
+
     // create map
     var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
@@ -61,6 +62,31 @@ function displayMap(data) {
         id: "light-v10",
         accessToken: API_KEY
     });
+    var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "outdoors-v9",
+        accessToken: API_KEY
+    });
+    var satelite = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "satellite-streets-v9",
+        accessToken: API_KEY
+    });
+
+    // Define a baseMaps object to hold our base layers
+    var baseMaps = {
+        "Satelite": satelite,
+        "Outdoors": outdoors,
+        "GrayScale": lightmap
+    };
+
+    // Create overlay object to hold our overlay layer
+    var overlayMaps = {
+        "Earthquakes": earthquakes
+        // "Fault Lines": faultlines
+    };
 
     var myMap = L.map("map", {
         center: [
@@ -69,6 +95,9 @@ function displayMap(data) {
         zoom: 1,
         layers: [lightmap, earthquakes]
     });
+    L.control.layers(baseMaps, overlayMaps, {
+        collapsed: false
+    }).addTo(myMap);
     // create Legend
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function (myMap) {
