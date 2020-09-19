@@ -1,5 +1,5 @@
 var url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
-function displayMap(data) {
+function displayMap(data, inputData2) {
     // create each feature
     function onEachFeature(feature, layer) {
         layer.bindPopup("<h3>" + feature.properties.place +
@@ -47,18 +47,19 @@ function displayMap(data) {
     }
 
     // create plate layer
-    d3.json('static/data/plates.json', function(inputdata){
-        plates=inputdata.features
-        console.log(plates)
-    })
-    
+
+    var faultlines=L.layerGroup();
+    L.geoJSON(inputData2, {
+        fillOpacity:0
+    }).addTo(faultlines);
 
 
     // create Layer
-    var earthquakes = L.geoJSON(data, {
+    var earthquakes = L.layerGroup();
+    L.geoJSON(data, {
         onEachFeature: onEachFeature,
         pointToLayer: createCircles
-    });
+    }).addTo(earthquakes)
 
 
     // create map
@@ -91,7 +92,7 @@ function displayMap(data) {
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
         "Earthquakes": earthquakes
-        // ,"Fault Lines": faultlines
+        ,"Fault Lines": faultlines
     };
 
     var myMap = L.map("map", {
@@ -122,5 +123,7 @@ function displayMap(data) {
 }
 
 d3.json(url, function (response) {
-    displayMap(response.features)
+    d3.json('static/data/plates.json', function(plateData){
+        displayMap(response.features, plateData.features)
+    })
 })
