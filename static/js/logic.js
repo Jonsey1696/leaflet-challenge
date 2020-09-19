@@ -46,6 +46,12 @@ function displayMap(data) {
         return L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], geojsonMarkerOptions);
     }
 
+    // create plate layer
+    d3.json('static/data/plates.json', function(inputdata){
+        plates=inputdata.features
+        console.log(plates)
+    })
+    
 
 
     // create Layer
@@ -85,7 +91,7 @@ function displayMap(data) {
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
         "Earthquakes": earthquakes
-        // "Fault Lines": faultlines
+        // ,"Fault Lines": faultlines
     };
 
     var myMap = L.map("map", {
@@ -98,6 +104,8 @@ function displayMap(data) {
     L.control.layers(baseMaps, overlayMaps, {
         collapsed: false
     }).addTo(myMap);
+
+    
     // create Legend
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function (myMap) {
